@@ -1,0 +1,45 @@
+apply plugin: 'jetty'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'war'
+
+httpPort = 8083
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    def springVersion = "4.2.4.RELEASE"
+    def elasticsearchVersion = "2.3.4"
+    def cassandraVersion = "3.0.2"
+    def activemqVersion = "5.13.3"
+
+    compile 'junit:junit:4.12'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile 'com.datastax.cassandra:cassandra-driver-core:${cassandraVersion}'
+    compile 'javax.xml.bind:jaxb-api:2.1'
+    compile 'log4j:log4j:1.2.17'
+    compile 'commons-logging:commons-logging:1.1.1'
+    compile 'commons-dbcp:commons-dbcp:1.4'
+    compile 'commons-io:commons-io:2.4'
+    compile 'org.apache.activemq:activemq-all:${activemqVersion}'
+    compile 'org.apache.activemq:activemq-web:${activemqVersion}'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.7.0'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.0'
+    compile 'mysql:mysql-connector-java:5.1.36'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'org.elasticsearch:elasticsearch:${elasticsearchVersion}'
+    compile 'com.google.guava:guava:19.0'
+
+    compile 'org.springframework:spring-context:${springVersion}'
+    compile 'org.springframework:spring-core:${springVersion}'
+    compile 'org.springframework:spring-beans:${springVersion}'
+    compile 'org.springframework:spring-context-support:${springVersion}'
+    compile 'org.springframework:spring-web:${springVersion}'
+    compile 'org.springframework:spring-webmvc:${springVersion}'
+    compile 'org.springframework:spring-jdbc:${springVersion}'
+    compile 'org.springframework:spring-jms:${springVersion}'
+}

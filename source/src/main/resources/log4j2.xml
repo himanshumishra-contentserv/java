@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- To create ExportAPI.jar file, uncomment below configuration tag and comment out all the remaining tags below it -->
+<!--<Configuration/>-->
+
+<Configuration status="WARN">
+  <Appenders>
+    <Console name="console-log" target="SYSTEM_OUT">
+      <PatternLayout pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %m%n" />
+    </Console>
+    <RollingFile name="info-log"
+                 fileName="${sys:exportLoggingPath}/INFO/${date:yyyy}/${date:yyyy-MM}/Recent.log"
+                 filePattern="${sys:exportLoggingPath}/INFO/${date:yyyy}/${date:yyyy-MM}/%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss}\t admin \t%X{itemType}\t%X{operationType}\t%m\t%X{traceID}%n</pattern>
+      </PatternLayout>
+      <Filters>
+        <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL" />
+        <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL" />
+        <ThresholdFilter level="fatal" onMatch="DENY" onMismatch="NEUTRAL" />
+        <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />
+      </Filters>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="5 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="9999999" />
+    </RollingFile>
+    <RollingFile name="warn-log"
+                 fileName="${sys:exportLoggingPath}/WARN/${date:yyyy}/${date:yyyy-MM}/Recent.log"
+                 filePattern="${sys:exportLoggingPath}/WARN/${date:yyyy}/${date:yyyy-MM}/%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss}\t admin \t %X{itemType}\t %X{operationType}\t%m\t%X{traceID}%n
+        </pattern>
+      </PatternLayout>
+      <Filters>
+        <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL" />
+        <ThresholdFilter level="fatal" onMatch="DENY" onMismatch="NEUTRAL" />
+        <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY" />
+      </Filters>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="5 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="9999999" />
+    </RollingFile>
+    <RollingFile name="error-log"
+                 fileName="${sys:exportLoggingPath}/ERROR/${date:yyyy}/${date:yyyy-MM}/Recent.log"
+                 filePattern="${sys:exportLoggingPath}/ERROR/${date:yyyy}/${date:yyyy-MM}/%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss}\t admin \t %X{itemType}\t %X{operationType}\t%m\t\t%X{traceID}%n
+        </pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="5 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="9999999" />
+    </RollingFile>
+    <RollingFile name="debug-log"
+                 fileName="${sys:exportLoggingPath}/DEBUG/${date:yyyy}/${date:yyyy-MM}/Recent.log"
+                 filePattern="${sys:exportLoggingPath}/DEBUG/${date:yyyy}/${date:yyyy-MM}/%d{yyyy-MM-dd}-%i.log">
+      <PatternLayout>
+        <pattern>%d{yyyy-MM-dd HH:mm:ss}\t admin \t %X{itemType}\t %X{operationType}\t%m\t\t%X{traceID}%n
+        </pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="5 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="9999999"/>
+
+    </RollingFile>
+
+  </Appenders>
+
+  <Loggers>
+    <Root level="DEBUG" additivity="false" />
+    <Logger name="exportstaging" additivity="false">
+      <appender-ref ref="info-log" level="INFO" />
+      <appender-ref ref="warn-log" level="WARN" />
+      <appender-ref ref="error-log" level="ERROR" />
+      <appender-ref ref="debug-log" level="${sys:exportDebugLoggerMode}" />
+    </Logger>
+    <Logger name="org.elasticsearch" level="ERROR" additivity="false" />
+    <Logger name="log4j.logger.org.apache.activemq" level="ERROR" additivity="false" />
+  </Loggers>
+</Configuration>

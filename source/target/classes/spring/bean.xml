@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+  	  http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd">
+    <context:annotation-config/>
+    <import resource="classpath:spring/configuration.xml"/>
+
+    <!-- Intermediate Database Connection -->
+    <!--TODO: Update the driver. Latest one available.-->
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url"
+                  value="jdbc:mysql://${jdbc.address}/${export.intermediate.database}?autoReconnect=true"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!-- TODO: instead of write all packages name, define only exclude package -->
+    <context:component-scan base-package="com.exportstaging.abstractclasses, com.exportstaging.common,
+    com.exportstaging.dataprovider, com.exportstaging.connectors, com.exportstaging.domain, com.exportstaging.initial,
+    com.exportstaging.main, com.exportstaging.moderators, com.exportstaging.subscribers, com.exportstaging.xmlcreation,
+    com.exportstaging.dao, com.exportstaging.poc, com.exportstaging.elasticsearch, com.exportstaging.producers,
+    com.exportstaging.utils, com.exportstaging.activemq, com.exportstaging.cleanup"/>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+  	  http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/util
+      http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- To Create API Jar or run API through IDE -->
+    <!--<util:properties id="exportProperties"
+                     location="classpath:properties/*.properties,classpath:project/properties/*.properties"/>
+    <context:property-placeholder
+            location="classpath:properties/*.properties,classpath:project/properties/*.properties"/>-->
+
+
+    <!-- For Creating Project Jar or run through IDE  -->
+    <util:properties id="exportProperties"
+                     location="classpath:properties/*.properties, file:${project.path}/*.properties"/>
+    <context:property-placeholder
+            location="classpath:properties/*.properties, file:${project.path}/*.properties"/>
+</beans>

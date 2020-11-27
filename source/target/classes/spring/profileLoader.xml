@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/task
+      http://www.springframework.org/schema/task/spring-task.xsd">
+    <import resource="classpath:spring/bean.xml"/>
+
+    <beans profile="BrokerProfile">
+        <bean id="activeMQSpringConnection" class="com.exportstaging.connectors.messagingqueue.ActiveMQSpringConnection"
+              init-method="createConnection">
+        </bean>
+        <task:scheduler id="masterProducerScheduler" pool-size="${export.producer.thread.pool.size}"/>
+        <task:scheduler id="projectProducerScheduler" pool-size="${export.producer.thread.pool.size}"/>
+    </beans>
+
+    <beans profile="ElasticSubscriberProfile">
+        <bean class="com.exportstaging.subscribers.ElasticSubscriber" id="elasticSubscriber"
+              depends-on="activeMQSpringConnection" init-method="startSubscriber">
+            <property name="subscriberName" value="ElasticSubscriber"/>
+        </bean>
+    </beans>
+
+    <beans profile="ElasticSubscriberProfile">
+        <bean class="com.exportstaging.subscribers.ElasticSubscriber" id="searchableElasticSubscriber"
+              depends-on="activeMQSpringConnection" init-method="startSubscriber">
+            <property name="subscriberName" value="SearchableElasticSubscriber"/>
+        </bean>
+    </beans>
+
+    <beans profile="MasterSubscriberProfile">
+        <bean class="com.exportstaging.subscribers.MasterSubscriber" id="masterSubscriber"
+              depends-on="activeMQSpringConnection" init-method="startSubscriber"/>
+    </beans>
+
+    <beans profile="WebSocketSubscriberProfile">
+        <bean class="com.exportstaging.subscribers.WebSocketSubscriber" id="websocketSubscriber"
+              depends-on="activeMQSpringConnection" init-method="startSubscriber"/>
+    </beans>
+
+    <beans profile="MasterProducerProfile">
+        <bean class="com.exportstaging.producers.MasterProducer" id="masterProducer"
+              depends-on="activeMQSpringConnection"
+              init-method="startProducer" destroy-method="stopProducer" lazy-init="true">
+        </bean>
+        <bean class="com.exportstaging.producers.ProjectProducer" id="projectProducer"
+              depends-on="activeMQSpringConnection"
+              init-method="startProducer" destroy-method="stopProducer" lazy-init="true">
+        </bean>
+        <bean class="com.exportstaging.producers.MasterProducerExecutor" id="masterProducerExecutor"/>
+
+        <bean class="com.exportstaging.producers.MasterProducerThreadMonitor" id="producerThreadMonitor">
+            <property name="producerBeans">
+                <list value-type="com.exportstaging.producers.Producer">
+                    <ref bean="masterProducer"/>
+                    <ref bean="projectProducer"/>
+                </list>
+            </property>
+        </bean>
+
+        <task:scheduler id="idbTableMonitorScheduler" pool-size="1"/>
+        <task:scheduled-tasks scheduler="idbTableMonitorScheduler">
+            <task:scheduled ref="producerThreadMonitor" method="manageProducerThreads" fixed-rate="60000"/>
+        </task:scheduled-tasks>
+    </beans>
+</beans>
